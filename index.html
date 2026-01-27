@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title> Eat Pray Love - I have no pulse </title>
+  <style>
+    body { margin:0; font-family:sans-serif; background:#f5f8fa; color:#232340; }
+    .container {
+      max-width: 440px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      transition: all .2s;
+      min-height: 100vh;
+      background: #f5f8fa;
+    }
+    .container.horizontal {
+      max-width: 100vw;
+      margin: 0;
+      flex-direction: row;
+      min-height: 100vh;
+      height: 100vh;
+      background: #f5f8fa;
+    }
+    .left-panel {
+  width: 40%;
+  min-width: 320px;
+  background: #f5f8fa;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  position: sticky;
+  top: 0;
+  align-self: flex-start;
+  height: 100vh;
+  z-index: 100;
+}
+
+    .right-panel {
+      width: 60%;
+      background: #f9fafb;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: stretch;
+      border-left: 2px solid #dbeafe;
+      min-height: 0;
+      height: 100vh;
+      overflow-y: auto;
+      padding: 0;
+    }
+    #fixed-top-group, #fixed-top-group-vert {
+      width: 100%;
+      background: #f5f8fa;
+      box-shadow: 0 4px 16px #d5dae533;
+      border-radius: 0 0 18px 18px;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      padding-bottom: 12px;
+    }
+    #player, #player-vert {
+      width: 100%;
+      aspect-ratio: 16/9;
+      border: none;
+      border-radius: 18px 18px 0 0;
+      background: #000;
+      box-shadow: 0 2px 10px #cdd4e7;
+      display: block;
+      max-width: 640px;
+      margin: 0 auto;
+    }
+    #fixed-controls, #fixed-controls-vert {
+      width: 100%;
+      background: #f5f8fa;
+      border-radius: 0 0 18px 18px;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      padding-bottom: 4px;
+    }
+    #progress, #progress-vert {
+      margin:12px 18px 8px 18px;
+      font-size:17px;
+      font-weight:500;
+      text-align:right;
+    }
+    #controls, #controls-vert {
+      display:flex;
+      gap:10px;
+      margin:0 18px 10px 18px;
+      align-items:center;
+      justify-content:center;
+    }
+    #controls button, #controls-vert button {
+      font-size:15px; padding:7px 14px; border-radius:10px; border:none;
+      background:#dbeafe; color:#232340; cursor:pointer;
+      transition: .13s;
+      white-space: nowrap;
+    }
+    #controls button.active, #controls-vert button.active { background:#232340; color:#fff; }
+    #mode-btn, #layout-btn, #mode-btn-vert, #layout-btn-vert {
+      font-size:14px; padding:6px 12px; border-radius:9px; border:none;
+      background:#fed7aa; color:#c2410c; cursor:pointer; margin-left:8px;
+      white-space: nowrap;
+    }
+    #mode-btn.active, #layout-btn.active, #mode-btn-vert.active, #layout-btn-vert.active { background:#c2410c; color:#fff;}
+    #subs-vert {
+      display:flex; flex-direction:column; gap:12px;
+      padding:0 0 24px 0;
+      width: 100%;
+      align-items: center;
+      flex: 1;
+      overflow-y: auto;
+      max-height: calc(100vh - 330px);
+      min-height: 0;
+    }
+    #subs {
+      display:flex; flex-direction:column; gap:12px;
+      padding:0 0 24px 0;
+      width: 100%;
+      align-items: stretch;
+    }
+    .sub-row {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      max-width: 100vw;
+      min-width: 0;
+      gap: 10px;
+      box-sizing: border-box;
+      margin: 0 auto;
+      transition: outline 0.15s, box-shadow 0.15s;
+    }
+    .sub-row.active {
+      outline: 3px solid #3b82f6 !important;
+      border-radius: 16px;
+      box-shadow: 0 0 0 2px #93c5fd66;
+      z-index: 1;
+    }
+    .sub-btn {
+      flex: 1 1 0%;
+      min-width: 0;
+      max-width: 100%;
+      font-size: 18px;
+      padding: 16px;
+      border-radius: 14px;
+      border: none;
+      background: #e0e7ff;
+      color: #232340;
+      text-align: left;
+      transition: .13s;
+      white-space: normal;
+      line-height: 1.3;
+      word-break: break-word;
+      overflow-wrap: break-word;
+      box-sizing: border-box;
+    }
+    .hide-btn, .check-btn {
+      flex-shrink: 0;
+      min-width: 44px;
+      max-width: 44px;
+      height: 44px;
+      font-size: 24px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+    }
+    .container.horizontal .sub-btn {
+      font-size: 30px;
+      padding: 18px 32px;
+    }
+    .container.horizontal .hide-btn,
+    .container.horizontal .check-btn {
+      font-size: 30px;
+      min-width: 52px;
+      max-width: 52px;
+      height: 52px;
+    }
+    .sub-btn:active { background:#a5b4fc; }
+    .sub-btn.learned { background:#a7f3d0; color:#157348; text-decoration:line-through; }
+    .hide-btn.active { color:#3b3b3b; }
+    .check-btn.checked { color:#22c55e; }
+    #vertical-root {
+      width: 100%;
+      max-width: 440px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: #f5f8fa;
+      height: 100vh;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+    #fixed-top-group-vert {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: #f5f8fa;
+    }
+    @media (max-width: 900px) {
+      .container.horizontal .left-panel, .container.horizontal .right-panel { width: 100%; min-width:0;}
+      .container.horizontal { flex-direction: column; }
+    }
+    @media (max-width: 520px) {
+      .container, .container.horizontal { flex-direction: column !important; max-width: 100vw !important; }
+      .left-panel, .right-panel { width: 100% !important; min-width:0;}
+      #fixed-top-group, #fixed-top-group-vert { border-radius:0 0 14px 14px; }
+      #player, #player-vert { border-radius:0;}
+      #fixed-controls, #fixed-controls-vert { border-radius:0 0 14px 14px;}
+      .sub-btn { font-size:15px; padding:12px;}
+      #progress, #progress-vert { font-size:14px;}
+      #vertical-root { max-width: 100vw; }
+      .sub-row { max-width: 100vw; }
+      .sub-btn { max-width: 98vw; }
+      .container.horizontal .sub-btn { font-size: 18px; }
+      .container.horizontal .hide-btn, .container.horizontal .check-btn { font-size: 18px; }
+    }
+  </style>
+</head>
+<body>
+<div class="container" id="container">
+  <!-- 가로모드(좌우) 패널 -->
+  <div class="left-panel" id="left-panel" style="display:none">
+    <div id="fixed-top-group">
+      <iframe id="player" src="https://www.youtube.com/embed/OFE5qIFWyR4?enablejsapi=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+      <div id="fixed-controls">
+        <div id="progress"></div>
+        <div id="controls">
+          <button id="show-all" class="active">전체 보기</button>
+          <button id="show-learned">외웠음 보기</button>
+          <button id="mode-btn" class="active">한줄 재생</button>
+          <button id="layout-btn" title="세로모드로 전환">세로모드</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="right-panel" id="right-panel" style="display:none">
+    <div id="subs"></div>
+  </div>
+  <!-- 세로모드 패널 -->
+  <div id="vertical-root">
+    <div id="fixed-top-group-vert">
+      <iframe id="player-vert" src="https://www.youtube.com/embed/OFE5qIFWyR4?enablejsapi=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+      <div id="fixed-controls-vert">
+        <div id="progress-vert"></div>
+        <div id="controls-vert">
+          <button id="show-all-vert" class="active">전체 보기</button>
+          <button id="show-learned-vert">외웠음 보기</button>
+          <button id="mode-btn-vert" class="active">한줄 재생</button>
+          <button id="layout-btn-vert" title="가로모드로 전환">가로모드</button>
+        </div>
+      </div>
+    </div>
+    <div id="subs-vert"></div>
+  </div>
+</div>
+<script>
+const SUBS = [
+  {
+    "start": 0.24,
+    "end": 2.478,
+    "text": "Hey, Gloria. I was just about to leave. What's up?"
+  },
+  {
+    "start": 2.478,
+    "end": 3.6,
+    "text": "Manny just texted me."
+  },
+  {
+    "start": 3.64,
+    "end": 4.96,
+    "text": "Did he tell you the news?"
+  },
+  {
+    "start": 4.971,
+    "end": 7.4,
+    "text": "Yes. Wonderful. We'll celebrate later."
+  },
+  {
+    "start": 7.411,
+    "end": 9.04,
+    "text": "No, he didn't get the solo."
+  },
+  {
+    "start": 9.2,
+    "end": 10.799,
+    "text": "I think he's very upset."
+  },
+  {
+    "start": 10.799,
+    "end": 11.776,
+    "text": "Aah!"
+  },
+  {
+    "start": 12.04,
+    "end": 13.6,
+    "text": "My glove. Where are you?"
+  },
+  {
+    "start": 13.64,
+    "end": 15.72,
+    "text": "At the doctor, he's checking my ankle."
+  },
+  {
+    "start": 16.4,
+    "end": 18.84,
+    "text": "Jay, I think you should try to cheer him up."
+  },
+  {
+    "start": 18.84,
+    "end": 20.4,
+    "text": "Why don't you take him shopping?"
+  },
+  {
+    "start": 20.44,
+    "end": 21.8,
+    "text": "Gloria, my match is at 5:00."
+  },
+  {
+    "start": 21.8,
+    "end": 25.48,
+    "text": "I have a ritual. I walk the lanes, I play 2 or 3 warm up games."
+  },
+  {
+    "start": 26.08,
+    "end": 28.24,
+    "text": "He's fine. I'll let you talk to him."
+  },
+  {
+    "start": 30.44,
+    "end": 31.76,
+    "text": "Darkness, please."
+  },
+  {
+    "start": 32.12,
+    "end": 33.48,
+    "text": "Oh, shoot. He's out in the pool."
+  },
+  {
+    "start": 33.52,
+    "end": 35.6,
+    "text": "What do I have to do to make you go away, sing?"
+  },
+  {
+    "start": 35.712,
+    "end": 37.12,
+    "text": "I'll have him call you back."
+  },
+  {
+    "start": 37.64,
+    "end": 40.12,
+    "text": "My life is a music-less gray hellscape."
+  },
+  {
+    "start": 40.131,
+    "end": 40.858,
+    "text": "Wow."
+  },
+  {
+    "start": 40.858,
+    "end": 43.2,
+    "text": "Well, this doesn't look like anything shopping can help you with."
+  },
+  {
+    "start": 43.64,
+    "end": 44.695,
+    "text": "It's worth a shot."
+  },
+  {
+    "start": 48.76,
+    "end": 51.8,
+    "text": "Sorry I was so indecisive back there. I'm out of it today."
+  },
+  {
+    "start": 51.84,
+    "end": 53.999,
+    "text": "Well, you got what you want, and that's what today is all about."
+  },
+  {
+    "start": 54.01,
+    "end": 55.477,
+    "text": "Turn that frown upside down."
+  },
+  {
+    "start": 55.818,
+    "end": 58.0,
+    "text": "Now you're gonna take this 15 local to get home."
+  },
+  {
+    "start": 58.04,
+    "end": 59.678,
+    "text": "Keep both your hands tight on that bag"
+  },
+  {
+    "start": 59.678,
+    "end": 61.32,
+    "text": "because it goes through a few sketchy blocks."
+  },
+  {
+    "start": 61.36,
+    "end": 62.4,
+    "text": "You're not driving me?"
+  },
+  {
+    "start": 62.52,
+    "end": 64.131,
+    "text": "Well, you kind of used up your drive time"
+  },
+  {
+    "start": 64.142,
+    "end": 66.2,
+    "text": "deciding between those identical belts."
+  },
+  {
+    "start": 66.43,
+    "end": 68.87,
+    "text": "Okay. It's just hard you know, Jay?"
+  },
+  {
+    "start": 69.19,
+    "end": 70.87,
+    "text": "I mean, I've never been a quitter."
+  },
+  {
+    "start": 70.91,
+    "end": 72.91,
+    "text": "Well, new chapter for you. You got any change?"
+  },
+  {
+    "start": 73.158,
+    "end": 75.71,
+    "text": "I mean, I always imagine I'd be a performer for life."
+  },
+  {
+    "start": 75.83,
+    "end": 77.51,
+    "text": "I guess some dreams you just have to give up on."
+  },
+  {
+    "start": 77.51,
+    "end": 79.35,
+    "text": "Know when to fold 'em. Here's a $50."
+  },
+  {
+    "start": 79.39,
+    "end": 80.59,
+    "text": "Someone will have change."
+  },
+  {
+    "start": 80.95,
+    "end": 82.91,
+    "text": "I can't sing, period."
+  },
+  {
+    "start": 84.31,
+    "end": 85.376,
+    "text": "What am I thinking?"
+  },
+  {
+    "start": 86.615,
+    "end": 88.994,
+    "text": "The 11 goes right by the house and there she is."
+  },
+  {
+    "start": 89.421,
+    "end": 90.95,
+    "text": "Now text your mom when you get home."
+  },
+  {
+    "start": 92.95,
+    "end": 94.15,
+    "text": "Good luck with your bowling."
+  },
+  {
+    "start": 94.51,
+    "end": 95.51,
+    "text": "Thanks, kid!"
+  },
+  {
+    "start": 105.345,
+    "end": 106.75,
+    "text": "[Honking]"
+  },
+  {
+    "start": 106.75,
+    "end": 108.121,
+    "text": "- Sing! - What?"
+  },
+  {
+    "start": 108.121,
+    "end": 109.394,
+    "text": "I've heard you sing in the shower."
+  },
+  {
+    "start": 109.405,
+    "end": 111.51,
+    "text": "You sing in the car with me. You never miss a note."
+  },
+  {
+    "start": 111.55,
+    "end": 113.67,
+    "text": "Your problem is doing it around people. Sing!"
+  },
+  {
+    "start": 113.71,
+    "end": 114.99,
+    "text": "You want me to sing now?"
+  },
+  {
+    "start": 115.001,
+    "end": 116.35,
+    "text": "Yeah. It's all in your head."
+  },
+  {
+    "start": 116.47,
+    "end": 117.962,
+    "text": "When you get over that little stage fright."
+  },
+  {
+    "start": 117.973,
+    "end": 120.03,
+    "text": "You'll never choke an audition again. Sing!"
+  },
+  {
+    "start": 120.87,
+    "end": 123.27,
+    "text": "\u266a I've been a puppet, a pauper, a pirate, a poet \u266a"
+  },
+  {
+    "start": 123.281,
+    "end": 126.47,
+    "text": "- That's not singing. Attack it! - \u266a A pawn and a king \u266a"
+  },
+  {
+    "start": 126.75,
+    "end": 129.83,
+    "text": "\u266a I've been up and down and over and out \u266a"
+  },
+  {
+    "start": 130.23,
+    "end": 131.438,
+    "text": "\u266a And I know one thing \u266a"
+  },
+  {
+    "start": 131.449,
+    "end": 132.35,
+    "text": "What's that thing?"
+  },
+  {
+    "start": 132.39,
+    "end": 136.9,
+    "text": "\u266a Each time I find myself flat on my face \u266a"
+  },
+  {
+    "start": 136.911,
+    "end": 137.86,
+    "text": "Yeah, now you got it!"
+  },
+  {
+    "start": 137.9,
+    "end": 139.7,
+    "text": "\u266a I pick myself up \u266a"
+  },
+  {
+    "start": 139.74,
+    "end": 143.029,
+    "text": "Get that bag. I know you want to! - \u266a And get back in the race \u266a"
+  },
+  {
+    "start": 143.029,
+    "end": 144.053,
+    "text": "- Yeah! - \u266a That's life \u266a"
+  },
+  {
+    "start": 144.1,
+    "end": 145.3,
+    "text": "Sing it to me, baby!"
+  },
+  {
+    "start": 145.98,
+    "end": 147.78,
+    "text": "\u266a That's all the people say \u266a"
+  },
+  {
+    "start": 148.82,
+    "end": 149.872,
+    "text": "Hola!"
+  },
+  {
+    "start": 149.872,
+    "end": 151.225,
+    "text": "- Hola!   - Hola!"
+  },
+  {
+    "start": 152.276,
+    "end": 154.74,
+    "text": "Oh! There's my little angel."
+  },
+  {
+    "start": 155.34,
+    "end": 156.7,
+    "text": "How was he?"
+  },
+  {
+    "start": 157.14,
+    "end": 159.209,
+    "text": "Uh. There's a funny story here."
+  },
+  {
+    "start": 159.209,
+    "end": 159.9,
+    "text": "Gloria!"
+  },
+  {
+    "start": 160.06,
+    "end": 163.34,
+    "text": "Forget about that baby and check out this one."
+  },
+  {
+    "start": 164.076,
+    "end": 167.522,
+    "text": "Did you beat closets, closets, closets, closets, closets?"
+  },
+  {
+    "start": 167.533,
+    "end": 169.034,
+    "text": "We destroyed them!"
+  },
+  {
+    "start": 169.034,
+    "end": 170.86,
+    "text": "And its closets, closets, closets, closets."
+  },
+  {
+    "start": 170.9,
+    "end": 171.564,
+    "text": "What did I say?"
+  },
+  {
+    "start": 171.564,
+    "end": 173.78,
+    "text": "We went through this for a half hour yesterday. I can't do it again."
+  },
+  {
+    "start": 174.1,
+    "end": 175.82,
+    "text": "Nope. You're gonna have to tell her."
+  },
+  {
+    "start": 175.86,
+    "end": 176.747,
+    "text": "What, why?"
+  },
+  {
+    "start": 176.758,
+    "end": 178.38,
+    "text": "Because she has two new rings."
+  },
+  {
+    "start": 178.58,
+    "end": 179.991,
+    "text": "That's gonna take the meat right off the bone."
+  },
+  {
+    "start": 179.991,
+    "end": 183.356,
+    "text": "Okay Cam, you take the fall for me, and I will go with you to Missouri."
+  },
+  {
+    "start": 183.718,
+    "end": 184.98,
+    "text": "I'll even go for a whole week."
+  },
+  {
+    "start": 185.1,
+    "end": 186.14,
+    "text": "Make it ten days."
+  },
+  {
+    "start": 186.62,
+    "end": 189.78,
+    "text": "Okay, fine. But I don't want to meet anything on Monday that I'm gonna eat on Friday."
+  },
+  {
+    "start": 189.82,
+    "end": 191.5,
+    "text": "Oh, well, that's gonna happen."
+  },
+  {
+    "start": 192.02,
+    "end": 193.943,
+    "text": "My perfect angel."
+  },
+  {
+    "start": 193.954,
+    "end": 195.406,
+    "text": "You got this. You're good."
+  },
+  {
+    "start": 197.239,
+    "end": 199.402,
+    "text": "do you remember that chafing dish  I lent you a couple months back"
+  },
+  {
+    "start": 199.413,
+    "end": 200.75,
+    "text": "that you returned with a chip in it?"
+  },
+  {
+    "start": 200.8,
+    "end": 204.431,
+    "text": "Every time that Luke comes over,  he takes things out of the attic"
+  },
+  {
+    "start": 204.442,
+    "end": 206.588,
+    "text": "and leaves them just everywhere."
+  },
+  {
+    "start": 206.624,
+    "end": 208.018,
+    "text": "Oh, yeah."
+  },
+  {
+    "start": 208.018,
+    "end": 211.44,
+    "text": "Well, you know, funny thing about that chafing dish is it was my grandmother's,"
+  },
+  {
+    "start": 211.48,
+    "end": 213.72,
+    "text": "and it was given to her... - Luke!"
+  },
+  {
+    "start": 218.4,
+    "end": 220.568,
+    "text": "Oh. Hey, Manny, I'm glad I ran into you."
+  },
+  {
+    "start": 220.579,
+    "end": 222.92,
+    "text": "Listen, I'm gonna give you the solo."
+  },
+  {
+    "start": 222.96,
+    "end": 225.32,
+    "text": "Really? You must have heard what happened to me today."
+  },
+  {
+    "start": 225.48,
+    "end": 226.942,
+    "text": "I feel confident now, and I know I can do..."
+  },
+  {
+    "start": 226.953,
+    "end": 228.225,
+    "text": "I don't care about any of that stuff."
+  },
+  {
+    "start": 228.225,
+    "end": 229.563,
+    "text": "I just need you to tell your mom"
+  },
+  {
+    "start": 229.563,
+    "end": 231.28,
+    "text": "that you gave your brother Joe a haircut, okay?"
+  },
+  {
+    "start": 231.32,
+    "end": 232.916,
+    "text": "No problem. How bad could it be?"
+  },
+  {
+    "start": 233.674,
+    "end": 234.456,
+    "text": "Ah!"
+  },
+  {
+    "start": 237.16,
+    "end": 239.523,
+    "text": "Anyway, I heard you needed a letter from school signed."
+  },
+  {
+    "start": 239.523,
+    "end": 242.122,
+    "text": "I kind of nailed my Declaration of Independence replica."
+  },
+  {
+    "start": 242.122,
+    "end": 244.04,
+    "text": "Forged every signature with this pen."
+  },
+  {
+    "start": 244.173,
+    "end": 244.986,
+    "text": "So... - Stop!"
+  },
+  {
+    "start": 245.242,
+    "end": 246.232,
+    "text": "We have a deal."
+  },
+  {
+    "start": 246.595,
+    "end": 249.52,
+    "text": "I'll say I cut the baby's hair and you give me that cool pen."
+  },
+  {
+    "start": 249.56,
+    "end": 251.96,
+    "text": "- What? No, no, that's not what I was going to... - A deal is a deal."
+  }
+];
+
+
+const STORAGE_KEY = 'subStatus_asianfood_yt';
+let status = {};
+let mode = 'vertical'; // vertical | horizontal
+let playingSubIdx = null;
+let pausedSubIdx = null;
+let paused = false;
+let playMode = 'single';
+let timeoutId, player, playerVert, currentView = 'all';
+
+// 추가: 마지막 클릭 자막 index
+let selectedSubIdx = null;
+
+function loadStatus() {
+  try {
+    status = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+    for (let i=0; i<SUBS.length; i++) {
+      if (!status[i]) status[i]={hide:false,learned:false};
+    }
+  } catch { status = {}; }
+}
+function saveStatus() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(status));
+}
+
+function renderSubs(view='all', mode='vertical') {
+  const subsDiv = (mode==='vertical') ? document.getElementById('subs-vert') : document.getElementById('subs');
+  subsDiv.innerHTML = '';
+  let learned = 0;
+  SUBS.forEach((sub, idx) => {
+    if (view==='learned' && !status[idx].learned) return;
+    if (status[idx].learned) learned++;
+    const row = document.createElement('div');
+    row.className = 'sub-row';
+    if (idx === selectedSubIdx) row.className += ' active';
+    const btn = document.createElement('button');
+    btn.className = 'sub-btn' + (status[idx].learned ? ' learned':'');
+    btn.innerText = status[idx].hide ? '🙈' : sub.text;
+    btn.onclick = () => playPauseOrRestartSub(idx, mode);
+    const hideBtn = document.createElement('button');
+    hideBtn.className = 'hide-btn' + (status[idx].hide ? ' active' : '');
+    hideBtn.innerText = '🙈';
+    hideBtn.title = status[idx].hide ? '자막 보이기' : '자막 숨기기';
+    hideBtn.onclick = (e) => {
+      status[idx].hide = !status[idx].hide;
+      saveStatus(); renderSubs(currentView, mode);
+      e.stopPropagation();
+    };
+    const checkBtn = document.createElement('button');
+    checkBtn.className = 'check-btn' + (status[idx].learned ? ' checked':'');
+    checkBtn.innerText = '✔️';
+    checkBtn.title = status[idx].learned ? '외웠음 해제' : '외웠음';
+    checkBtn.onclick = (e) => {
+      status[idx].learned = !status[idx].learned;
+      saveStatus(); renderSubs(currentView, mode);
+      e.stopPropagation();
+    };
+    row.appendChild(btn);
+    row.appendChild(hideBtn);
+    row.appendChild(checkBtn);
+    subsDiv.appendChild(row);
+  });
+  let percent = SUBS.length ? Math.round(learned/SUBS.length*100) : 0;
+  const prog = (mode==='vertical') ? document.getElementById('progress-vert') : document.getElementById('progress');
+  if (prog) prog.innerHTML =
+    `진행률: <b>${percent}%</b> (${learned}/${SUBS.length})`;
+}
+
+function onYouTubeIframeAPIReady() {
+  player = new YT.Player('player');
+  playerVert = new YT.Player('player-vert');
+}
+window.onYouTubeIframeAPIReady = onYouTubeIframeAPIReady;
+
+// 클릭한 자막 줄만 테두리 남기고, 재생이 끝나도 유지
+function playPauseOrRestartSub(idx, mode='vertical') {
+  selectedSubIdx = idx;
+  renderSubs(currentView, mode);
+  const curPlayer = (mode === 'vertical') ? playerVert : player;
+  if (!curPlayer || !curPlayer.seekTo) return;
+  const state = curPlayer.getPlayerState();
+  if (playingSubIdx !== idx) {
+    playSubByMode(idx, mode);
+    playingSubIdx = idx;
+    pausedSubIdx = null;
+    paused = false;
+    return;
+  }
+  if (state === 1) {
+    curPlayer.pauseVideo();
+    if (timeoutId) clearTimeout(timeoutId);
+    paused = true;
+    pausedSubIdx = idx;
+    playingSubIdx = null;
+    return;
+  }
+  if (state === 2 && paused && pausedSubIdx === idx) {
+    playSubByMode(idx, mode);
+    playingSubIdx = idx;
+    paused = false;
+    pausedSubIdx = null;
+    return;
+  }
+  playSubByMode(idx, mode);
+  playingSubIdx = idx;
+  paused = false;
+  pausedSubIdx = null;
+}
+function playSubByMode(idx, mode='vertical') {
+  const curPlayer = (mode === 'vertical') ? playerVert : player;
+  let start = SUBS[idx].start;
+  let end;
+  if (playMode === 'single') {
+    end = SUBS[idx].end;
+  } else {
+    end = (SUBS[idx+1] ? SUBS[idx+1].end : SUBS[idx].end);
+  }
+  curPlayer.seekTo(start, true);
+  curPlayer.playVideo();
+  if (timeoutId) clearTimeout(timeoutId);
+  timeoutId = setTimeout(() => {
+    curPlayer.pauseVideo();
+    playingSubIdx = null;
+    paused = false;
+    pausedSubIdx = null;
+    // 재생 종료 시에도 selectedSubIdx는 그대로, outline 유지!
+  }, (end - start) * 1000);
+}
+function setLayout(newMode) {
+  mode = newMode;
+  const cont = document.getElementById('container');
+  if (mode === 'horizontal') {
+    cont.classList.add('horizontal');
+    document.getElementById('left-panel').style.display = '';
+    document.getElementById('right-panel').style.display = '';
+    document.getElementById('vertical-root').style.display = 'none';
+    renderSubs(currentView, 'horizontal');
+  } else {
+    cont.classList.remove('horizontal');
+    document.getElementById('left-panel').style.display = 'none';
+    document.getElementById('right-panel').style.display = 'none';
+    document.getElementById('vertical-root').style.display = '';
+    renderSubs(currentView, 'vertical');
+  }
+}
+function setHandlers() {
+  // 세로모드
+  document.getElementById('show-all-vert').onclick = function() {
+    currentView='all';
+    this.classList.add('active');
+    document.getElementById('show-learned-vert').classList.remove('active');
+    renderSubs('all', 'vertical');
+  };
+  document.getElementById('show-learned-vert').onclick = function() {
+    currentView='learned';
+    this.classList.add('active');
+    document.getElementById('show-all-vert').classList.remove('active');
+    renderSubs('learned', 'vertical');
+  };
+  document.getElementById('mode-btn-vert').onclick = function() {
+    if (playMode === 'single') {
+      playMode = 'next';
+      this.textContent = '다음줄까지 재생';
+      this.classList.add('active');
+    } else {
+      playMode = 'single';
+      this.textContent = '한줄 재생';
+      this.classList.remove('active');
+    }
+  };
+  document.getElementById('layout-btn-vert').onclick = function() {
+    setLayout('horizontal');
+  };
+  // 가로모드
+  document.getElementById('show-all').onclick = function() {
+    currentView='all';
+    this.classList.add('active');
+    document.getElementById('show-learned').classList.remove('active');
+    renderSubs('all', 'horizontal');
+  };
+  document.getElementById('show-learned').onclick = function() {
+    currentView='learned';
+    this.classList.add('active');
+    document.getElementById('show-all').classList.remove('active');
+    renderSubs('learned', 'horizontal');
+  };
+  document.getElementById('mode-btn').onclick = function() {
+    if (playMode === 'single') {
+      playMode = 'next';
+      this.textContent = '다음줄까지 재생';
+      this.classList.add('active');
+    } else {
+      playMode = 'single';
+      this.textContent = '한줄 재생';
+      this.classList.remove('active');
+    }
+  };
+  document.getElementById('layout-btn').onclick = function() {
+    setLayout('vertical');
+  };
+}
+window.onload = function() {
+  loadStatus();
+  setHandlers();
+  setLayout('vertical'); // 기본 세로모드
+  const tag = document.createElement('script');
+  tag.src = "https://www.youtube.com/iframe_api";
+  document.body.appendChild(tag);
+};
+</script>
+</body>
+</html>
